@@ -3,7 +3,7 @@ export interface Session {
   username: string;
 }
 
-export async function createSession(_session: Session): Promise<void> {
+export async function createSession(): Promise<void> {
   return;
 }
 

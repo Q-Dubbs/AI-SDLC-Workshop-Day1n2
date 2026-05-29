@@ -45,13 +45,13 @@ export interface User {
 }
 
 export const todoDB = {
-  listByUser: (_userId: number): Todo[] => [],
+  listByUser: (): Todo[] => [],
 };
 
 export const tagDB = {
-  listByUser: (_userId: number): Tag[] => [],
+  listByUser: (): Tag[] => [],
 };
 
 export const templateDB = {
-  listByUser: (_userId: number): Template[] => [],
+  listByUser: (): Template[] => [],
 };

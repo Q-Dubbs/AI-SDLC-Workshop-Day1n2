@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 const PROTECTED_ROUTES = ['/', '/calendar'];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hasSession = Boolean(request.cookies.get('session'));
 
