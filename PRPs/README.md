@@ -77,6 +77,8 @@ This directory contains detailed Product Requirement Prompts split by feature fo
     - Registration and login with biometrics
     - Session management with JWT
     - Route protection middleware
+   - Implementation runbook: **[11-authentication-implementation-plan.md](11-authentication-implementation-plan.md)**
+   - Execution checklist: **[11-authentication-execution-checklist.md](11-authentication-execution-checklist.md)**
 
 ## 🎯 How to Use These PRPs
 
