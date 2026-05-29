@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unable to start registration' }, { status: 400 });
     }
 
-    const { rpID, rpName } = getWebAuthnConfig();
+    const { rpID, rpName } = getWebAuthnConfig(request);
 
     const options = await generateRegistrationOptions({
       rpID,
@@ -46,7 +46,14 @@ export async function POST(request: Request) {
     challengeDB.put(user.id, options.challenge, 'register');
 
     return NextResponse.json({ options });
-  } catch {
-    return NextResponse.json({ error: 'Unable to create registration options' }, { status: 500 });
+  } catch (error) {
+    const message =
+      process.env.NODE_ENV === 'production'
+        ? 'Unable to create registration options'
+        : error instanceof Error
+          ? `Unable to create registration options: ${error.message}`
+          : 'Unable to create registration options';
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

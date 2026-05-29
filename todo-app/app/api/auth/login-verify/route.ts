@@ -37,7 +37,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Authenticator not found' }, { status: 404 });
     }
 
-    const { rpID, expectedOrigin } = getWebAuthnConfig();
+    const { rpID, expectedOrigin } = getWebAuthnConfig(request);
 
     const verification = await verifyAuthenticationResponse({
       response: body.response,
@@ -63,7 +63,14 @@ export async function POST(request: Request) {
     await createSession({ userId: user.id, username: user.username });
 
     return NextResponse.json({ verified: true });
-  } catch {
-    return NextResponse.json({ error: 'Unable to verify login' }, { status: 500 });
+  } catch (error) {
+    const message =
+      process.env.NODE_ENV === 'production'
+        ? 'Unable to verify login'
+        : error instanceof Error
+          ? `Unable to verify login: ${error.message}`
+          : 'Unable to verify login';
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

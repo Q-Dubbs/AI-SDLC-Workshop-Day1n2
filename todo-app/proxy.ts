@@ -2,14 +2,28 @@ import { NextResponse, type NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 
 const SESSION_COOKIE = 'todo_session';
+const DEV_JWT_SECRET = 'todo-app-dev-jwt-secret';
+
+function getJwtSecret(): string | null {
+  if (process.env.JWT_SECRET) {
+    return process.env.JWT_SECRET;
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    return DEV_JWT_SECRET;
+  }
+
+  return null;
+}
 
 function hasValidSession(token: string | undefined): boolean {
-  if (!token || !process.env.JWT_SECRET) {
+  const secret = getJwtSecret();
+  if (!token || !secret) {
     return false;
   }
 
   try {
-    jwt.verify(token, process.env.JWT_SECRET);
+    jwt.verify(token, secret);
     return true;
   } catch {
     return false;

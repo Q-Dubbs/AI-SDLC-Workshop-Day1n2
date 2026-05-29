@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unable to start login' }, { status: 400 });
     }
 
-    const { rpID } = getWebAuthnConfig();
+    const { rpID } = getWebAuthnConfig(request);
 
     const options = await generateAuthenticationOptions({
       rpID,
@@ -42,7 +42,14 @@ export async function POST(request: Request) {
     challengeDB.put(user.id, options.challenge, 'login');
 
     return NextResponse.json({ options });
-  } catch {
-    return NextResponse.json({ error: 'Unable to create login options' }, { status: 500 });
+  } catch (error) {
+    const message =
+      process.env.NODE_ENV === 'production'
+        ? 'Unable to create login options'
+        : error instanceof Error
+          ? `Unable to create login options: ${error.message}`
+          : 'Unable to create login options';
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

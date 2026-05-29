@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Registration challenge expired' }, { status: 400 });
     }
 
-    const { rpID, expectedOrigin } = getWebAuthnConfig();
+    const { rpID, expectedOrigin } = getWebAuthnConfig(request);
     const verification = await verifyRegistrationResponse({
       response: body.response,
       expectedChallenge,
@@ -61,7 +61,14 @@ export async function POST(request: Request) {
     await createSession({ userId: user.id, username: user.username });
 
     return NextResponse.json({ verified: true });
-  } catch {
-    return NextResponse.json({ error: 'Unable to verify registration' }, { status: 500 });
+  } catch (error) {
+    const message =
+      process.env.NODE_ENV === 'production'
+        ? 'Unable to verify registration'
+        : error instanceof Error
+          ? `Unable to verify registration: ${error.message}`
+          : 'Unable to verify registration';
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

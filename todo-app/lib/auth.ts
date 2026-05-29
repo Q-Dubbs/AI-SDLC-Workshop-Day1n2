@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 
 export const SESSION_COOKIE = 'todo_session';
 const SESSION_DURATION_SECONDS = 7 * 24 * 60 * 60;
+const DEV_JWT_SECRET = 'todo-app-dev-jwt-secret';
 
 type SessionPayload = {
   userId: number;
@@ -13,6 +14,10 @@ type SessionPayload = {
 
 function getJwtSecret(): string {
   const value = process.env.JWT_SECRET;
+  if (!value && process.env.NODE_ENV !== 'production') {
+    return DEV_JWT_SECRET;
+  }
+
   if (!value) {
     throw new Error('JWT_SECRET is not configured');
   }
